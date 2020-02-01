@@ -15,10 +15,13 @@
     "url": "https://github.com/barksh/Bark-Shell-Web/issues"
   },
   "homepage": "https://github.com/barksh/Bark-Shell-Web#readme",
-  "dependencies": {},
+  "dependencies": {
+    "socket.io-client": "^2.3.0"
+  },
   "devDependencies": {
     "@sudoo/io": "^1.6.2",
-    "@sudoo/triforce": "^2.1.0"
+    "@sudoo/triforce": "^2.1.0",
+    "@types/socket.io-client": "^1.4.32"
   },
   "nyc": {
     "extension": [
