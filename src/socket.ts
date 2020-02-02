@@ -4,7 +4,7 @@
  * @description Socket
  */
 
-import SocketIO from "socket.io-client";
+import * as SocketIO from "socket.io-client";
 import { AttemptingHandler, FailingHandler, MessageHandler } from "./declare";
 
 export class BarkSocket {
@@ -32,11 +32,15 @@ export class BarkSocket {
         this._routePath = routePath;
     }
 
-    public get socketId(): string {
-        return this._socket.id;
+    public get socketId(): string | null {
+
+        if (this._socket) {
+            return this._socket.id;
+        }
+        return null;
     }
     public get connected(): boolean {
-        return this._socket.connected;
+        return this._socket ? this._socket.connected : false;
     }
 
     public declareMessageHandler(messageHandler: MessageHandler): this {
@@ -101,21 +105,27 @@ export class BarkSocket {
 
     public destroy(): this {
 
-        this._socket.close();
-        this._socket = null;
+        if (this._socket) {
+
+            this._socket.close();
+            this._socket = null;
+        }
         return this;
     }
 
     public send(value: string): this {
 
-        this._socket.emit('message', value);
+        this.emit('message', value);
         return this;
     }
 
     public emit(event: string, value: string): this {
 
-        this._socket.emit(event, value);
-        return this;
+        if (this._socket) {
+            this._socket.emit(event, value);
+            return this;
+        }
+        throw new Error('[BARK-SHELL] Socket must be established first');
     }
 
     private _buildHeaders(): Record<string, string> {
