@@ -9,12 +9,13 @@ import { AttemptingHandler, FailingHandler, MessageHandler } from "./declare";
 
 export class BarkSocket {
 
-    public static create(webSocketPath: string): BarkSocket {
+    public static create(webSocketPath: string, routePath: string): BarkSocket {
 
-        return new BarkSocket(webSocketPath);
+        return new BarkSocket(webSocketPath, routePath);
     }
 
     private readonly _webSocketPath: string;
+    private readonly _routePath: string;
 
     private _socket: SocketIOClient.Socket | null = null;
 
@@ -25,9 +26,10 @@ export class BarkSocket {
 
     private _bearer: string | null = null;
 
-    private constructor(webSocketPath: string) {
+    private constructor(webSocketPath: string, routePath: string) {
 
         this._webSocketPath = webSocketPath;
+        this._routePath = routePath;
     }
 
     public get socketId(): string {
@@ -62,17 +64,22 @@ export class BarkSocket {
 
     public establish(reconnectionAttempts: number = 10): this {
 
-        const socket: SocketIOClient.Socket = SocketIO(this._webSocketPath, {
-            autoConnect: true,
-            forceNew: true,
-            reconnection: true,
-            reconnectionAttempts,
-            transportOptions: {
-                polling: {
-                    extraHeaders: this._buildHeaders(),
+        const socket: SocketIOClient.Socket = SocketIO(
+            this._webSocketPath,
+            {
+                path: this._routePath,
+                autoConnect: true,
+                forceNew: true,
+                reconnection: true,
+                reconnectionAttempts,
+                transportOptions: {
+                    polling: {
+                        extraHeaders: this._buildHeaders(),
+                    },
                 },
             },
-        });
+        );
+
         if (this._messageHandler) {
             socket.on('message', this._messageHandler);
         }
