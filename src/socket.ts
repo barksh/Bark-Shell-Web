@@ -72,8 +72,9 @@ export class BarkSocket {
             this._webSocketPath,
             {
                 path: this._routePath,
-                autoConnect: true,
+                secure: true,
                 forceNew: true,
+                autoConnect: true,
                 reconnection: true,
                 reconnectionAttempts,
                 transportOptions: {
