@@ -4,10 +4,17 @@
  * @description Index
  */
 
+export enum PAYLOAD_TYPE {
+
+    MESSAGE = "message",
+    UNAUTHORIZED = "unauthorized",
+}
+
 export enum ATTACHMENT_TYPE {
 
     TEXT = "TEXT",
     IMAGE = "IMAGE",
+    LINK = "LINK",
 }
 
 export type BarkShellSuggestion = {
@@ -27,6 +34,10 @@ export type BarkShellAttachment = {
     readonly src: string;
     readonly originalName: string;
     readonly size: string;
+} | {
+    readonly type: ATTACHMENT_TYPE.LINK;
+    readonly alias: string;
+    readonly url: string;
 };
 
 export type BarkShellResponse = {
