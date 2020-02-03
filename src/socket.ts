@@ -5,7 +5,7 @@
  */
 
 import * as SocketIO from "socket.io-client";
-import { AttemptingHandler, FailingHandler, MessageHandler } from "./declare";
+import { AttemptingHandler, FailingHandler, MessageHandler, PAYLOAD_TYPE, UnauthorizedHandler } from "./declare";
 
 export class BarkSocket {
 
@@ -20,6 +20,7 @@ export class BarkSocket {
     private _socket: SocketIOClient.Socket | null = null;
 
     private _messageHandler: MessageHandler | null = null;
+    private _unauthorizedHandler: UnauthorizedHandler | null = null;
     private _connectErrorHandler: FailingHandler | null = null;
     private _reconnectErrorHandler: FailingHandler | null = null;
     private _reconnectingHandler: AttemptingHandler | null = null;
@@ -45,6 +46,10 @@ export class BarkSocket {
 
     public declareMessageHandler(messageHandler: MessageHandler): this {
         this._messageHandler = messageHandler;
+        return this;
+    }
+    public declareUnauthorizedHandler(unauthorizedHandler: UnauthorizedHandler): this {
+        this._unauthorizedHandler = unauthorizedHandler;
         return this;
     }
     public declareConnectErrorHandler(failingHandler: FailingHandler): this {
@@ -86,7 +91,10 @@ export class BarkSocket {
         );
 
         if (this._messageHandler) {
-            socket.on('message', this._messageHandler);
+            socket.on(PAYLOAD_TYPE.MESSAGE, this._messageHandler);
+        }
+        if (this._unauthorizedHandler) {
+            socket.on(PAYLOAD_TYPE.UNAUTHORIZED, this._unauthorizedHandler);
         }
         if (this._connectErrorHandler) {
             socket.on('connect_error', this._connectErrorHandler);
@@ -116,7 +124,7 @@ export class BarkSocket {
 
     public send(value: string): this {
 
-        this.emit('message', value);
+        this.emit(PAYLOAD_TYPE.MESSAGE, value);
         return this;
     }
 

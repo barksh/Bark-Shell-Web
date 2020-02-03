@@ -49,4 +49,5 @@ export type BarkShellResponse = {
 
 export type MessageHandler = (response: BarkShellResponse) => void;
 export type AttemptingHandler = (attempt: number) => void;
+export type UnauthorizedHandler = () => void;
 export type FailingHandler = () => void;
